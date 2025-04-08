@@ -1,0 +1,58 @@
+<c-row ngPreserveWhitespaces>
+  
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header>
+        <strong>Jobs</strong> 
+      </c-card-header>
+      <c-card-body>
+        
+          <table [striped]="true" cTable>
+            <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Customer</th>
+              <th scope="col">Device Type</th>
+              <th scope="col">Problem</th>
+              <th scope="col">Est. Delivery</th>
+              <th scope="col">Est. Price</th>
+              <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="isLoading">
+                <td colspan="7" class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </td>
+              </tr>
+              <tr *ngIf="jobs.length === 0 && !isLoading">
+                  <td colspan="7" class="text-center">No jobs found</td>
+              </tr>
+              <tr *ngFor="let job of jobs">
+                  <td>{{ job.id }}</td>
+                  <td>{{ job.full_name }} (ID: {{ job.user_id }})</td>
+                  <td>{{ job.item_type }}</td>
+                  <td>{{ job.problem_description }}</td>
+                  <td>{{ job.estimated_delivery | date }}</td>
+                  <td>{{ job.estimated_price | currency }}</td>
+                  <td>
+                      <span class="badge" [ngClass]="{
+                          'bg-warning': job.status === 'pending',
+                          'bg-info': job.status === 'in_progress',
+                          'bg-success': job.status === 'completed'
+                      }">
+                          {{ job.status }}
+                      </span>
+                  </td>
+              </tr>
+            </tbody>
+          </table>
+        
+        
+      </c-card-body>
+    </c-card>
+  </c-col>
+  
+</c-row>

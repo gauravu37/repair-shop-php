@@ -1,0 +1,54 @@
+<!-- src/app/components/job-create/job-create.component.html -->
+<div class="container">
+  <h2>Create New Job</h2>
+  <form [formGroup]="jobForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="customer_id">Customer</label>
+      <select class="form-control" id="customer_id" formControlName="customer_id" required>
+        <option value="">Select Customer</option>
+        <option *ngFor="let user of users" [value]="user.id">
+          {{ user.username }} ({{ user.phone }})
+        </option>
+      </select>
+    </div>
+
+    <h4>Items</h4>
+    <div formArrayName="items">
+      <div *ngFor="let item of itemForms.controls; let i=index" [formGroupName]="i" class="item-row mb-3 p-3 border">
+        <div class="row">
+          <div class="col-md-4">
+            <label>Item</label>
+            <select class="form-control" formControlName="item_id" (change)="onItemSelect(i)" required>
+              <option value="">Select Item</option>
+              <option *ngFor="let availItem of availableItems" [value]="availItem.id">
+                {{ availItem.name }} ({{ availItem.price | currency }})
+              </option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <label>Quantity</label>
+            <input type="number" class="form-control" formControlName="quantity" 
+                   (change)="calculateTotal(i)" min="1">
+          </div>
+          <div class="col-md-2">
+            <label>Price</label>
+            <input type="number" class="form-control" formControlName="price" readonly>
+          </div>
+          <div class="col-md-2">
+            <label>Total</label>
+            <input type="number" class="form-control" formControlName="total" readonly>
+          </div>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="button" class="btn btn-danger" (click)="removeItem(i)">Remove</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-secondary mb-3" (click)="addItem()">Add Item</button>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary" [disabled]="!jobForm.valid">Create Job</button>
+    </div>
+  </form>
+</div>

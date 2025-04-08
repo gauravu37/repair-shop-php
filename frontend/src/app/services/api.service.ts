@@ -1,0 +1,58 @@
+// src/app/services/api.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiService {
+  private apiUrl = 'http://localhost/computer_repair_php/repair-shop-php/api';
+
+  constructor(private http: HttpClient) { }
+  
+    // auth.service.ts
+	login(email: string, password: string): Observable<any> {
+	  return this.http.post(`${this.apiUrl}/login.php`, { email, password });
+	}
+
+	getProtectedData(): Observable<any> {
+	  const headers = new HttpHeaders({
+		'Authorization': `Bearer ${this.getToken()}`
+	  });
+	  return this.http.get(`${this.apiUrl}/protected.php`, { headers });
+	}
+
+	private getToken(): string {
+	  return localStorage.getItem('auth_token') || '';
+	}
+
+    // User methods
+  getJobs(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/jobs.php`);
+  }
+
+  // User methods
+  getUsers(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users.php`);
+  }
+
+  createUser(user: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users.php`, user);
+  }
+
+  // Job methods
+  createJob(job: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/jobs.php`, job);
+  }
+
+  getJob(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/jobs.php?id=${id}`);
+  }
+
+  // Item methods
+  getItems(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/items.php`);
+  }
+  
+}
