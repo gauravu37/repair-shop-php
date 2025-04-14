@@ -24,6 +24,8 @@ switch ($method) {
         $job->problem_description = $data->problem_description;
         $job->estimated_delivery = $data->estimated_delivery;
         $job->estimated_price = $data->estimated_price;
+        $job->devices = $data->devices;
+        
         
         if($job->create()) {
             http_response_code(201);

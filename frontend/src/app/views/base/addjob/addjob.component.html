@@ -1,0 +1,88 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header ngPreserveWhitespaces>
+        <strong>Create New Repair Job</strong>
+      </c-card-header>
+      <c-card-body>
+        <form cForm [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="row g-3">
+          <!-- Customer Selection -->
+          <c-col md="12">
+            <label cLabel for="inputCustomer">Customer</label>
+            <select cSelect id="inputCustomer" formControlName="user_id">
+              <option value="">Select customer...</option>
+              <option *ngFor="let customer of customers" [value]="customer.id">
+                {{ customer.full_name }} ({{ customer.phone }})
+              </option>
+            </select>
+          </c-col>
+
+          <!-- Devices Form Array -->
+          <div formArrayName="devices" class="col-12">
+            <div *ngFor="let device of devices.controls; let i = index" [formGroupName]="i" class="mb-4 p-3 border rounded">
+              <h5>Device #{{i + 1}}</h5>
+              <c-row class="g-3">
+                <c-col md="6">
+                  <label cLabel [for]="'deviceType_' + i">Device Type</label>
+                  <select cSelect [id]="'deviceType_' + i" formControlName="device_type">
+                    <option value="">Select device type...</option>
+                    <option *ngFor="let type of itemTypes" [value]="type">
+                      {{ type | titlecase }}
+                    </option>
+                  </select>
+                </c-col>
+
+                <c-col md="6">
+                  <label cLabel [for]="'problemDesc_' + i">Problem Description</label>
+                  <textarea cFormControl [id]="'problemDesc_' + i" 
+                            formControlName="problem_description" rows="3"></textarea>
+                </c-col>
+
+                <c-col md="6">
+                  <label cLabel [for]="'estimatedPrice_' + i">Estimated Price ($)</label>
+                  <input type="number" cFormControl [id]="'estimatedPrice_' + i" 
+                         formControlName="estimated_price" min="0" step="0.01">
+                </c-col>
+
+                <c-col xs="12" *ngIf="devices.length > 1">
+                  <button cButton color="danger" type="button" (click)="removeDevice(i)">
+                    Remove Device
+                  </button>
+                </c-col>
+              </c-row>
+            </div>
+          </div>
+
+          <!-- Add Device Button -->
+          <c-col xs="12">
+            <button cButton color="secondary" type="button" (click)="addDevice()">
+             + Add Another Device
+            </button>
+          </c-col>
+
+          <!-- Delivery Date -->
+          <c-col md="6">
+            <label cLabel for="estimatedDelivery">Estimated Delivery Date</label>
+            <input type="date" cFormControl id="estimatedDelivery" 
+                   formControlName="estimated_delivery" [min]="minDate">
+          </c-col>
+
+          <!-- Total Price Display -->
+          <c-col md="6">
+            <label cLabel>Total Estimated Price</label>
+            <div class="form-control">
+              {{ calculateTotalPrice() | currency }}
+            </div>
+          </c-col>
+
+          <!-- Submit Button -->
+          <c-col xs="12">
+            <button cButton color="primary" type="submit" >
+              Create Job
+            </button>
+          </c-col>
+        </form>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

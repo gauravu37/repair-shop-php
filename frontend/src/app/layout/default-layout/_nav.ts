@@ -31,7 +31,7 @@ export const navItems: INavData[] = [
       },
       {
         name: 'New',
-        url: '/base/jobs/new',
+        url: '/base/addjob',
         icon: 'nav-icon-bullet'
       },
     ]

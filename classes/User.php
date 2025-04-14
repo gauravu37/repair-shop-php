@@ -57,8 +57,9 @@ class User {
     }
 
     public function read() {
-        $query = 'SELECT id, username, email, phone, whatsapp, address, user_type, created_at 
+        $query = 'SELECT id, username, full_name, email, phone, whatsapp, address, user_type, created_at 
                   FROM ' . $this->table . ' 
+                   WHERE user_type = "customer"
                   ORDER BY created_at DESC';
         
         $stmt = $this->conn->prepare($query);

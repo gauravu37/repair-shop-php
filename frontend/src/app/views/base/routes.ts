@@ -147,7 +147,7 @@ export const routes: Routes = [
       },
       {
         path: 'addjob',
-        loadComponent: () => import('./layout/layout.component').then(m => m.LayoutComponent),
+        loadComponent: () => import('./addjob/addjob.component').then(m => m.AddjobComponent),
         data: {
           title: 'Add Job'
         },

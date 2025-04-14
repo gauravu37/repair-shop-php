@@ -1,0 +1,131 @@
+import { Component } from '@angular/core';
+import { DocsExampleComponent } from '@docs-components/public-api'
+import { FormsModule, FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { JobService } from '../../../services/job.service';
+import { HttpClientModule } from '@angular/common/http'; // Add this import
+
+import { 
+  RowComponent, ColComponent, CardComponent, CardHeaderComponent, CardBodyComponent,
+  FormControlDirective, FormDirective, FormLabelDirective, ButtonDirective,
+  InputGroupComponent, InputGroupTextDirective, 
+  TextColorDirective,FormSelectDirective, FormCheckComponent, FormCheckInputDirective, FormCheckLabelDirective, ColDirective
+} from '@coreui/angular';
+
+interface Device {
+  device_type: string;
+  problem_description: string;
+  estimated_price: number;
+}
+
+interface JobRequest {
+  user_id: number;
+  estimated_delivery: string;
+  estimated_price: number;
+  devices: Device[];
+  item_type: string;
+  problem_description: string;
+}
+
+@Component({
+  selector: 'app-addjob',
+  templateUrl: './addjob.component.html',
+  styleUrls: ['./addjob.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    HttpClientModule, // Add this line
+    ReactiveFormsModule,
+    RowComponent, ColComponent,
+    CardComponent, CardHeaderComponent, CardBodyComponent,
+    FormControlDirective, FormDirective, FormLabelDirective,
+    ButtonDirective,
+    InputGroupComponent, InputGroupTextDirective,
+    RowComponent, ColComponent, TextColorDirective, CardComponent, CardHeaderComponent, CardBodyComponent, DocsExampleComponent, FormControlDirective, ReactiveFormsModule, FormsModule, FormDirective, FormLabelDirective, FormSelectDirective, FormCheckComponent, FormCheckInputDirective, FormCheckLabelDirective, ButtonDirective, ColDirective, InputGroupComponent, InputGroupTextDirective
+  ],
+  providers: [JobService]
+})
+export class AddjobComponent {
+  jobForm: FormGroup = this.fb.group({
+    user_id: ['', Validators.required],
+    devices: this.fb.array([
+      this.createDeviceFormGroup()
+    ]),
+    estimated_delivery: ['', Validators.required]
+  });
+
+  customers: any[] = [];
+  itemTypes = ['laptop', 'desktop', 'printer', 'monitor', 'phone', 'tablet', 'other'];
+  minDate: string = new Date().toISOString().split('T')[0];
+
+  constructor(
+    private fb: FormBuilder,
+    private jobService: JobService,
+    private router: Router
+  ) {
+    this.loadCustomers();
+  }
+
+  get devices(): FormArray {
+    return this.jobForm.get('devices') as FormArray;
+  }
+
+  createDeviceFormGroup(): FormGroup {
+    return this.fb.group({
+      device_type: ['', Validators.required],
+      problem_description: ['', [Validators.required, Validators.minLength(10)]],
+      estimated_price: ['', [Validators.required, Validators.min(0)]]
+    });
+  }
+
+  addDevice(): void {
+    this.devices.push(this.createDeviceFormGroup());
+  }
+
+  removeDevice(index: number): void {
+    this.devices.removeAt(index);
+  }
+
+  loadCustomers(): void {
+    this.jobService.getCustomers().subscribe({
+      next: (response) => this.customers = response.records || response,
+      error: (err) => console.error('Error loading customers:', err)
+    });
+  }
+
+  calculateTotalPrice(): number {
+    return this.devices.controls.reduce((sum, device) => {
+      return sum + (+device.get('estimated_price')?.value || 0);
+    }, 0);
+  }
+
+  onSubmit(): void {
+    alert(this.jobForm.valid );
+    if (this.jobForm.valid && this.devices.length > 0) {
+      const firstDevice = this.jobForm.value.devices[0];
+      
+      const jobData: JobRequest = {
+        user_id: this.jobForm.value.user_id,
+        estimated_delivery: this.jobForm.value.estimated_delivery,
+        estimated_price: this.calculateTotalPrice(),
+        devices: this.jobForm.value.devices,
+        item_type: firstDevice.device_type,
+        problem_description: firstDevice.problem_description
+      };
+
+      this.jobService.createJob(jobData).subscribe({
+        next: () => {
+          alert('Job created successfully!');
+          this.router.navigate(['base/jobs']);
+        },
+        error: (err) => {
+          console.error('Error creating job:', err);
+          alert('Error creating job. Please try again.');
+        }
+      });
+    } else {
+      alert('Please add at least one device and fill all required fields');
+    }
+  }
+}

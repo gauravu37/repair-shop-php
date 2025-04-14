@@ -30,6 +30,7 @@ switch ($method) {
                 $user_item = array(
                     "id" => $id,
                     "username" => $username,
+                    "full_name" => $full_name,
                     "email" => $email,
                     "phone" => $phone,
                     "whatsapp" => $whatsapp,
