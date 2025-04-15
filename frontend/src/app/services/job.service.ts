@@ -26,9 +26,19 @@ export class JobService {
     return this.http.get<Job[]>(this.apiUrl);
   }
 
+  // Add this new method to get a single job
+  getJob(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?id=${id}`);
+  }
+
   createJob(jobData: Job): Observable<any> {
     return this.http.post(this.apiUrl, jobData);
   }
+
+  updateJob(id: number, jobData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/?id=${id}`, jobData);
+  }
+
   getCustomers(): Observable<any> {
     return this.http.get('http://localhost/computer_repair_php/repair-shop-php/api/users.php');
   }

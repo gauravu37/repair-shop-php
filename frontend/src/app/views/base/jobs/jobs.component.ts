@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http'; // Add this import
+import { RouterLink } from '@angular/router';
 
 import { 
   RowComponent, 
@@ -28,7 +29,8 @@ import { JobService } from '../../../services/job.service';
         CardComponent, 
         CardHeaderComponent, 
         CardBodyComponent, 
-        TableDirective
+        TableDirective,
+        RouterLink
     ],
     providers: [JobService]
 })

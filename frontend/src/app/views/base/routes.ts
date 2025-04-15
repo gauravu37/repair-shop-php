@@ -151,6 +151,13 @@ export const routes: Routes = [
         data: {
           title: 'Add Job'
         },
+      },
+      {
+        path: 'addjob/:id',
+        loadComponent: () => import('./addjob/addjob.component').then(m => m.AddjobComponent),
+        data: {
+          title: 'Edit Job'
+        },
       }
     ]
   }

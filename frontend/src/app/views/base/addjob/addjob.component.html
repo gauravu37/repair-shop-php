@@ -2,7 +2,7 @@
   <c-col xs="12">
     <c-card class="mb-4">
       <c-card-header ngPreserveWhitespaces>
-        <strong>Create New Repair Job</strong>
+        <strong>{{ isEditMode ? 'Edit Repair Job' : 'Create New Repair Job' }}</strong>
       </c-card-header>
       <c-card-body>
         <form cForm [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="row g-3">
@@ -67,8 +67,20 @@
                    formControlName="estimated_delivery" [min]="minDate">
           </c-col>
 
+          <!-- Status (Only shown in edit mode) -->
+          <c-col md="6" *ngIf="isEditMode">
+            <label cLabel for="status">Status</label>
+            <select cSelect id="status" formControlName="status">
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </c-col>
+
+          <input type="hidden" name="id" *ngIf="isEditMode" value="6" />
+
           <!-- Total Price Display -->
-          <c-col md="6">
+          <c-col md="6" >
             <label cLabel>Total Estimated Price</label>
             <div class="form-control">
               {{ calculateTotalPrice() | currency }}
@@ -77,8 +89,8 @@
 
           <!-- Submit Button -->
           <c-col xs="12">
-            <button cButton color="primary" type="submit" >
-              Create Job
+            <button cButton color="primary" type="submit">
+              {{ isEditMode ? 'Update Job' : 'Create Job' }}
             </button>
           </c-col>
         </form>

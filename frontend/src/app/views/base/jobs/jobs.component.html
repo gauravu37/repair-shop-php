@@ -48,8 +48,8 @@
                       </span>
                   </td>
                   <td>
-                    <a cNavLink routerLink="/base/addjob/">
-                      <i class="cil-energy"></i>Edit
+                    <a cNavLink [routerLink]="['/base/addjob', job.id]">
+                      <i class="cil-energy"></i> Edit
                     </a>
                   </td>
               </tr>
