@@ -89,6 +89,18 @@ switch ($method) {
             break;
         }
 
+        if(isset($_GET['totalJobsCount'])){
+            $type = $_GET['totalJobsCount'];
+            if(isset($_GET['month'])){
+                $cmonth = $_GET['month'];
+                $total = $job->totalJobsCount($type,$cmonth);
+            }else{
+                $total = $job->totalJobsCount($type);
+            }
+            echo $total[0]['total_jobs'];
+            break;
+        }
+
         // Check if an ID was provided in the URL
         if(isset($_GET['id'])) {
             // Get single job

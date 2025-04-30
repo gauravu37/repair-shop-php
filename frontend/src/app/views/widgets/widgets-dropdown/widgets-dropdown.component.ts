@@ -28,6 +28,15 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
   totalUsers = '';
   totalPaidPayment = '';
   totalPendingPayment = '';
+  getJobsCountTotal = '';
+  getJobsCountPending = '';
+  getJobsCountProgress = '';
+  getJobsCountCompleted = '';
+  getJobsCountCurrentTotal = '';
+  getJobsCountCurrentPending = '';
+  getJobsCountCurrentProgress = '';
+  getJobsCountCurrentCompleted = '';
+  
   constructor(
     private changeDetectorRef: ChangeDetectorRef,private apiService: ApiService, private jobService: JobService
   ) {}
@@ -138,9 +147,32 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
     });
     this.jobService.getTotalPendingPayment().subscribe( (res) => {
       this.totalPendingPayment = res;
-    }
+    });
+    this.jobService.getJobsCountTotal().subscribe( (res) => {
+      this.getJobsCountTotal = res;
+    });
+    this.jobService.getJobsCountPending().subscribe( (res) => {
+      this.getJobsCountPending = res;
+    });
+    this.jobService.getJobsCountProgress().subscribe( (res) => {
+      this.getJobsCountProgress = res;
+    });
+    this.jobService.getJobsCountCompleted().subscribe( (res) => {
+      this.getJobsCountCompleted = res;
+    });
 
-    );
+    this.jobService.getJobsCountCurrentTotal().subscribe( (res) => {
+      this.getJobsCountCurrentTotal = res;
+    });
+    this.jobService.getJobsCountCurrentPending().subscribe( (res) => {
+      this.getJobsCountCurrentPending = res;
+    });
+    this.jobService.getJobsCountCurrentProgress().subscribe( (res) => {
+      this.getJobsCountCurrentProgress = res;
+    });
+    this.jobService.getJobsCountCurrentCompleted().subscribe( (res) => {
+      this.getJobsCountCurrentCompleted = res;
+    });
   }
 
   ngAfterContentInit(): void {

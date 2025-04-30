@@ -39,6 +39,53 @@ export class JobService {
     return this.http.get(`${this.apiUrl}/?totalpayment=pending`);
   }
 
+  /* Dashboad All Jobs Section
+   * 
+   */
+
+  //Get All Total Jobs Count
+  getJobsCountTotal(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=all`);
+  }
+
+  //Get Pending Jobs Count
+  getJobsCountPending(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=pending`);
+  }
+
+  //Get Progress Jobs Count
+  getJobsCountProgress(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=in_progress`);
+  }
+
+  //Get Completed Jobs Count
+  getJobsCountCompleted(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=completed`);
+  }
+
+  // Month Wise //
+
+  //Get All Total Jobs Count
+  getJobsCountCurrentTotal(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=all&month=all`);
+  }
+
+  //Get Pending Jobs Count
+  getJobsCountCurrentPending(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=pending&month=pending`);
+  }
+
+  //Get Progress Jobs Count
+  getJobsCountCurrentProgress(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=in_progress&month=progress`);
+  }
+
+  //Get Completed Jobs Count
+  getJobsCountCurrentCompleted(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalJobsCount=completed&month=completed`);
+  }
+  /* -------------------- */
+
   createJob(jobData: Job): Observable<any> {
     return this.http.post(this.apiUrl, jobData);
   }

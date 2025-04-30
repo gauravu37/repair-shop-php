@@ -21,6 +21,7 @@ class Job {
     public $payment_method;
     public $upi_link;
     public $toalPaidPayment;
+    public $totalJobCount;
 
     public function __construct($db) {
         $this->conn = $db;
@@ -188,6 +189,26 @@ class Job {
         //if($type == 'paid'){
             return $this->toalPaidPayment = $result;
         //}
+    }
+
+    public function totalJobsCount($status="all", $month="") {
+        if($status == 'all'){
+            if($month != ''){
+                $query = "SELECT COUNT(id) AS total_jobs FROM jobs WHERE MONTH(job_date) = MONTH(CURRENT_DATE()) AND YEAR(job_date) = YEAR(CURRENT_DATE())";
+            }else{
+                $query = "SELECT COUNT(id) AS total_jobs FROM jobs";
+            }
+        }else{
+            if($month != ''){
+                $query = "SELECT COUNT(id) AS total_jobs FROM jobs WHERE MONTH(job_date) = MONTH(CURRENT_DATE()) AND YEAR(job_date) = YEAR(CURRENT_DATE()) AND status = '$status'";
+            }else{
+                $query = "SELECT COUNT(id) AS total_jobs FROM jobs WHERE status = '$status'";
+            }
+        }
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $this->totalJobCount = $result;
     }
 
     /*// Main update method
