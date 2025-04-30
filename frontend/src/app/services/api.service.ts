@@ -37,6 +37,11 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/users.php`);
   }
 
+  // User methods
+  getTotalUsers(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users.php?totalusers=1`);
+  }
+
   createUser(user: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/users.php`, user);
   }

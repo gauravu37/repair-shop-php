@@ -21,6 +21,11 @@ switch ($method) {
         $stmt = $user->read();
         $num = $stmt->rowCount();
 
+        if(isset($_GET['totalusers']) && $_GET['totalusers'] == '1'){
+            echo $num;
+            exit;
+        }
+
         if($num > 0) {
             $users_arr = array();
             $users_arr["records"] = array();

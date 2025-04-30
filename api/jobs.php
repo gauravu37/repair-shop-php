@@ -25,6 +25,23 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'POST':
+        if (isset($_GET['payment'])) {
+            $data = json_decode(file_get_contents("php://input"));
+            
+            if ($job->updatePayment(
+                $data->status,
+                $data->method ?? null,
+                $data->upi_link ?? null
+            )) {
+                http_response_code(200);
+                echo json_encode(["message" => "Payment updated"]);
+            } else {
+                http_response_code(500);
+                echo json_encode(["message" => "Payment update failed"]);
+            }
+        }
+
+
         $data = json_decode(file_get_contents("php://input"));
         
         $job->user_id = $data->user_id;
@@ -44,6 +61,34 @@ switch ($method) {
         break;
         
     case 'GET':
+        //To download invoices
+        if (isset($_GET['invoice'])) {
+            // Generate invoice
+            $job->id = $_GET['id'];
+            if ($job->generateInvoice()) {
+                http_response_code(200);
+                echo json_encode(array(
+                    "message" => "Invoice generated and sent",
+                    "invoice_path" => $job->getInvoicePath()
+                ));
+            } else {
+                http_response_code(500);
+                echo json_encode(array("message" => "Failed to generate invoice"));
+            }
+        }
+        elseif (isset($_GET['download_invoice'])) {
+            // Download invoice
+            $job->id = $_GET['id'];
+            $job->downloadInvoice($job->id);
+        }
+
+        if (isset($_GET['totalpayment'])) {
+            $type = $_GET['totalpayment'];
+            $total = $job->totalPayment($type);
+            echo $total[0]['total_paid_amount'];
+            break;
+        }
+
         // Check if an ID was provided in the URL
         if(isset($_GET['id'])) {
             // Get single job
@@ -59,7 +104,10 @@ switch ($method) {
                     "estimated_delivery" => $job->estimated_delivery,
                     "estimated_price" => $job->estimated_price,
                     "status" => $job->status,
-                    "devices" => $job->devices // Make sure your Job class loads devices
+                    "devices" => $job->devices, // Make sure your Job class loads devices
+                    "payment_status" => $job->payment_status,
+                    "payment_method" => $job->payment_method,
+                    "upi_link" => $job->upi_link
                 ));
             } else {
                 http_response_code(404);
@@ -86,7 +134,8 @@ switch ($method) {
                         "problem_description" => $problem_description,
                         "estimated_delivery" => $estimated_delivery,
                         "estimated_price" => $estimated_price,
-                        "status" => $status
+                        "status" => $status,
+                        "payment_status" => $payment_status
                     );
                     
                     array_push($jobs_arr["data"], $job_item);
@@ -103,16 +152,24 @@ switch ($method) {
         
     case 'PUT':
         $data = json_decode(file_get_contents("php://input"));
-        //echo $_GET['id'];
-        //print_r($data);
-        //exit;
-        $job->id = $_GET['id'];
+        $id = isset($_GET['id']) ? $_GET['id'] : null;
+        
+        if (!$id) {
+            http_response_code(400);
+            echo json_encode(["message" => "ID is required"]);
+            break;
+        }
+
+        $job->id = $id;
         $job->item_type = $data->item_type;
         $job->problem_description = $data->problem_description;
         $job->estimated_delivery = $data->estimated_delivery;
         $job->estimated_price = $data->estimated_price;
         $job->status = $data->status ?? 'pending'; // Default status if not provided
         $job->devices = $data->devices ?? []; // Handle devices if provided
+        $job->payment_status = $data->payment_status ?? null;
+        $job->payment_method = $data->payment_method ?? null;
+        $job->upi_link = $data->upi_link ?? null;
         
         if($job->update()) {
             http_response_code(200);

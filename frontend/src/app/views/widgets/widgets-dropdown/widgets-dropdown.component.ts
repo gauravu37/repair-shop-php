@@ -12,18 +12,24 @@ import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { RouterLink } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, ThemeDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, DropdownDividerDirective } from '@coreui/angular';
+import { ApiService } from '../../../services/api.service';
+import { JobService } from '../../../services/job.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
     selector: 'app-widgets-dropdown',
     templateUrl: './widgets-dropdown.component.html',
     styleUrls: ['./widgets-dropdown.component.scss'],
     changeDetection: ChangeDetectionStrategy.Default,
-    imports: [RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, IconDirective, ThemeDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, RouterLink, DropdownDividerDirective, ChartjsComponent]
+    imports: [HttpClientModule, RowComponent, ColComponent, WidgetStatAComponent, TemplateIdDirective, IconDirective, ThemeDirective, DropdownComponent, ButtonDirective, DropdownToggleDirective, DropdownMenuDirective, DropdownItemDirective, RouterLink, DropdownDividerDirective, ChartjsComponent],
+    providers: [ApiService,JobService]
 })
 export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
-
+  totalUsers = '';
+  totalPaidPayment = '';
+  totalPendingPayment = '';
   constructor(
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,private apiService: ApiService, private jobService: JobService
   ) {}
 
   data: any[] = [];
@@ -124,11 +130,22 @@ export class WidgetsDropdownComponent implements OnInit, AfterContentInit {
 
   ngOnInit(): void {
     this.setData();
+    this.apiService.getTotalUsers().subscribe((res) => {
+      this.totalUsers = res;
+    });
+    this.jobService.getTotalPaidPayment().subscribe((response) => {
+      this.totalPaidPayment =  response;
+    });
+    this.jobService.getTotalPendingPayment().subscribe( (res) => {
+      this.totalPendingPayment = res;
+    }
+
+    );
   }
 
   ngAfterContentInit(): void {
     this.changeDetectorRef.detectChanges();
-
+;
   }
 
   setData() {

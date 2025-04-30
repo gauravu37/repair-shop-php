@@ -28,7 +28,15 @@ export class JobService {
 
   // Add this new method to get a single job
   getJob(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/?id=${id}`);
+    return this.http.get(`${this.apiUrl}/?id=${id}&payment_info=true`);
+  }
+
+  getTotalPaidPayment(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalpayment=paid`);
+  }
+
+  getTotalPendingPayment(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/?totalpayment=pending`);
   }
 
   createJob(jobData: Job): Observable<any> {
@@ -37,6 +45,10 @@ export class JobService {
 
   updateJob(id: number, jobData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/?id=${id}`, jobData);
+  }
+
+  generateInvoice(jobId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}?id=${jobId}&invoice=true`);
   }
 
   getCustomers(): Observable<any> {

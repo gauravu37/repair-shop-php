@@ -8,13 +8,16 @@
         <form cForm [formGroup]="jobForm" (ngSubmit)="onSubmit()" class="row g-3">
           <!-- Customer Selection -->
           <c-col md="12">
-            <label cLabel for="inputCustomer">Customer</label>
+            <label cLabel for="inputCustomer">Customer *</label>
             <select cSelect id="inputCustomer" formControlName="user_id">
               <option value="">Select customer...</option>
               <option *ngFor="let customer of customers" [value]="customer.id">
                 {{ customer.full_name }} ({{ customer.phone }})
               </option>
             </select>
+            <div *ngIf="jobForm.get('user_id')?.invalid && jobForm.get('user_id')?.touched" class="text-danger">
+              Customer selection is required
+            </div>
           </c-col>
 
           <!-- Devices Form Array -->
@@ -23,25 +26,34 @@
               <h5>Device #{{i + 1}}</h5>
               <c-row class="g-3">
                 <c-col md="6">
-                  <label cLabel [for]="'deviceType_' + i">Device Type</label>
+                  <label cLabel [for]="'deviceType_' + i">Device Type *</label>
                   <select cSelect [id]="'deviceType_' + i" formControlName="device_type">
                     <option value="">Select device type...</option>
                     <option *ngFor="let type of itemTypes" [value]="type">
                       {{ type | titlecase }}
                     </option>
                   </select>
+                  <div *ngIf="device.get('device_type')?.invalid && device.get('device_type')?.touched" class="text-danger">
+                    Device type is required
+                  </div>
                 </c-col>
 
                 <c-col md="6">
-                  <label cLabel [for]="'problemDesc_' + i">Problem Description</label>
+                  <label cLabel [for]="'problemDesc_' + i">Problem Description *</label>
                   <textarea cFormControl [id]="'problemDesc_' + i" 
                             formControlName="problem_description" rows="3"></textarea>
+                  <div *ngIf="device.get('problem_description')?.invalid && device.get('problem_description')?.touched" class="text-danger">
+                    Description is required and must be at least 10 characters
+                  </div>
                 </c-col>
 
                 <c-col md="6">
-                  <label cLabel [for]="'estimatedPrice_' + i">Estimated Price ($)</label>
+                  <label cLabel [for]="'estimatedPrice_' + i">Estimated Price ($) *</label>
                   <input type="number" cFormControl [id]="'estimatedPrice_' + i" 
                          formControlName="estimated_price" min="0" step="0.01">
+                  <div *ngIf="device.get('estimated_price')?.invalid && device.get('estimated_price')?.touched" class="text-danger">
+                    Valid price is required
+                  </div>
                 </c-col>
 
                 <c-col xs="12" *ngIf="devices.length > 1">
@@ -62,9 +74,12 @@
 
           <!-- Delivery Date -->
           <c-col md="6">
-            <label cLabel for="estimatedDelivery">Estimated Delivery Date</label>
+            <label cLabel for="estimatedDelivery">Estimated Delivery Date *</label>
             <input type="date" cFormControl id="estimatedDelivery" 
                    formControlName="estimated_delivery" [min]="minDate">
+            <div *ngIf="jobForm.get('estimated_delivery')?.invalid && jobForm.get('estimated_delivery')?.touched" class="text-danger">
+              Delivery date is required
+            </div>
           </c-col>
 
           <!-- Status (Only shown in edit mode) -->
@@ -77,10 +92,72 @@
             </select>
           </c-col>
 
-          <input type="hidden" name="id" *ngIf="isEditMode" value="6" />
+          <!-- Payment Form (shown when status is completed) -->
+          <ng-container *ngIf="showPaymentForm && isEditMode">
+            <c-col md="12">
+              <h5>Payment Information</h5>
+            </c-col>
+            <!--
+            <c-col md="6">
+              <label cLabel for="paymentStatus">Payment Status *</label>
+              <select cSelect id="paymentStatus" formControlName="payment_status">
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+              </select>
+            </c-col>
+
+            <c-col md="6" *ngIf="jobForm.get('payment_status')?.value === 'paid'">
+              <label cLabel for="paymentMethod">Payment Method *</label>
+              <select cSelect id="paymentMethod" formControlName="payment_method">
+                <option *ngFor="let method of paymentMethods" [value]="method">
+                  {{ method.replace('_', ' ') | titlecase }}
+                </option>
+              </select>
+            </c-col>
+
+            <c-col md="6" *ngIf="jobForm.get('payment_status')?.value === 'pending'">
+              <label cLabel for="upiLink">UPI Payment Link *</label>
+              <input type="text" cFormControl id="upiLink" formControlName="upi_link" 
+                     placeholder="https://upi.link/...">
+            </c-col>-->
+            <!-- Payment Status -->
+            <c-col md="6">
+              <label cLabel for="paymentStatus">Payment Status *</label>
+              <select cSelect id="paymentStatus" formControlName="payment_status">
+                <option value="pending">Pending</option>
+                <option value="paid">Paid</option>
+              </select>
+              <div *ngIf="jobForm.get('payment_status')?.invalid && jobForm.get('payment_status')?.touched" class="text-danger">
+                Payment status is required
+              </div>
+            </c-col>
+
+            <!-- Payment Method (shown when paid) -->
+            <c-col md="6" *ngIf="jobForm.get('payment_status')?.value === 'paid'">
+              <label cLabel for="paymentMethod">Payment Method *</label>
+              <select cSelect id="paymentMethod" formControlName="payment_method">
+                <option *ngFor="let method of paymentMethods" [value]="method">
+                  {{ method.replace('_', ' ') | titlecase }}
+                </option>
+              </select>
+              <div *ngIf="jobForm.get('payment_method')?.invalid && jobForm.get('payment_method')?.touched" class="text-danger">
+                Payment method is required
+              </div>
+            </c-col>
+
+            <!-- UPI Link (shown when pending) -->
+            <c-col md="6" *ngIf="jobForm.get('payment_status')?.value === 'pending'">
+              <label cLabel for="upiLink">UPI Payment Link *</label>
+              <input type="url" cFormControl id="upiLink" formControlName="upi_link" 
+                    placeholder="https://upi.link/...">
+              <div *ngIf="jobForm.get('upi_link')?.invalid && jobForm.get('upi_link')?.touched" class="text-danger">
+                Valid UPI link is required
+              </div>
+            </c-col>
+          </ng-container>
 
           <!-- Total Price Display -->
-          <c-col md="6" >
+          <c-col md="6">
             <label cLabel>Total Estimated Price</label>
             <div class="form-control">
               {{ calculateTotalPrice() | currency }}
@@ -89,7 +166,7 @@
 
           <!-- Submit Button -->
           <c-col xs="12">
-            <button cButton color="primary" type="submit">
+            <button cButton color="primary" type="submit" >
               {{ isEditMode ? 'Update Job' : 'Create Job' }}
             </button>
           </c-col>
