@@ -56,6 +56,34 @@
                   </div>
                 </c-col>
 
+                <c-col md="6">
+                  <label cLabel [for]="'srno_' + i">Serial Number</label>
+                  <input type="text" cFormControl [id]="'srno_' + i" 
+                         formControlName="serial_number" min="0" step="0.01">
+                  
+                </c-col>
+
+               <!-- Replacement Checkbox --> 
+              <c-col md="6">
+                <label cLabel>
+                  <input type="checkbox" formControlName="needs_replacement" 
+                        (change)="onReplacementChange(i)">
+                  Needs Replacement 
+                </label>
+              </c-col>  
+
+              <!-- Replacement Serial Number -->
+              <c-col md="6" *ngIf="device.get('needs_replacement')?.value"> 
+                <label cLabel [for]="'replacement_srno_' + i">Replacement Serial Number *</label>
+                <input type="text" cFormControl [id]="'replacement_srno_' + i" 
+                      formControlName="replacement_serial_number" 
+                      [required]="device.get('needs_replacement')?.value">
+                <!--<div *ngIf="device.get('needs_replacement')?.value && device.get('replacement_serial_number').invalid && device.get('replacement_serial_number').touched" 
+                    class="text-danger">
+                  Replacement serial number is required when replacement is needed
+                </div>-->
+              </c-col>
+
                 <c-col xs="12" *ngIf="devices.length > 1">
                   <button cButton color="danger" type="button" (click)="removeDevice(i)">
                     Remove Device

@@ -16,7 +16,10 @@ import {
 interface Device {
   device_type: string;
   problem_description: string;
+  serial_number : string;
   estimated_price: number;
+  needs_replacement: boolean;      // New field
+  replacement_serial_number?: string; // New field (optional)
   id?: number; // Optional for new devices
 }
 
@@ -26,6 +29,7 @@ interface Job {
   job_date: string;
   item_type: string;
   problem_description: string;
+  serial_number : string;
   estimated_delivery: string;
   estimated_price: number;
   status: string;
@@ -39,6 +43,7 @@ interface JobRequest {
   devices: Device[];
   item_type: string;
   problem_description: string;
+  serial_number : string;
   status?: string; // Optional for new jobs
 }
 
@@ -308,7 +313,24 @@ export class AddjobComponent implements OnInit {
         this.jobId = +id;
         this.loadJob(this.jobId);
       }
+    }); 
+
+    
+
+    this.devices.controls.forEach(device => {
+      device.get('needs_replacement')?.valueChanges.subscribe(needsReplacement => {
+        if (!needsReplacement) {
+          device.get('replacement_serial_number')?.setValue('');
+        }
+      });
     });
+
+    // Initialize value change listeners for all devices
+  this.devices.controls.forEach((device, index) => {
+    device.get('needs_replacement')?.valueChanges.subscribe(value => {
+      this.onReplacementChange(index);
+    });
+  });
 
     // Watch for status changes to show/hide payment form
     this.jobForm.get('status')?.valueChanges.subscribe(status => {
@@ -339,6 +361,7 @@ export class AddjobComponent implements OnInit {
     });
   }
 
+  
   loadJob(id: number) {
     this.jobService.getJob(id).subscribe({
       next: (job: any) => {
@@ -364,7 +387,10 @@ export class AddjobComponent implements OnInit {
             problem_description: [device.problem_description, 
                                  [Validators.required, Validators.minLength(10)]],
             estimated_price: [device.estimated_price, 
-                            [Validators.required, Validators.min(0)]]
+                            [Validators.required, Validators.min(0)]],
+            serial_number: [device.serial_number || ''],  // Optional field    
+            needs_replacement: [device.needs_replacement || false],  // Add this
+            replacement_serial_number: [device.replacement_serial_number || '']  // Add this            
           }));
         });
 
@@ -374,6 +400,21 @@ export class AddjobComponent implements OnInit {
     });
   }
 
+ // In your component methods
+onReplacementChange(index: number) {
+  const device = this.devices.at(index);
+  const needsReplacement = device.get('needs_replacement')?.value ?? false;
+  
+  if (needsReplacement) {
+    device.get('replacement_serial_number')?.setValidators([Validators.required]);
+  } else {
+    device.get('replacement_serial_number')?.clearValidators();
+    device.get('replacement_serial_number')?.setValue('');
+  }
+  device.get('replacement_serial_number')?.updateValueAndValidity();
+} 
+
+
   get devices(): FormArray {
     return this.jobForm.get('devices') as FormArray;
   }
@@ -382,7 +423,10 @@ export class AddjobComponent implements OnInit {
     return this.fb.group({
       device_type: ['', Validators.required],
       problem_description: ['', [Validators.required, Validators.minLength(10)]],
-      estimated_price: ['', [Validators.required, Validators.min(0)]]
+      estimated_price: ['', [Validators.required, Validators.min(0)]],
+      serial_number : [''],
+      needs_replacement: [false],  // New field
+      replacement_serial_number: ['']  // New field
     });
   }
 
@@ -410,10 +454,36 @@ export class AddjobComponent implements OnInit {
   onSubmit(): void {
     this.markFormGroupTouched(this.jobForm);
 
-    if (this.jobForm.invalid) {
+// Validate replacement serial numbers
+  let hasReplacementError = false;
+  this.devices.controls.forEach(device => {
+    if (device.get('needs_replacement')?.value && !device.get('replacement_serial_number')?.value) {
+      device.get('replacement_serial_number')?.setErrors({ required: true });
+      hasReplacementError = true;
+    }
+  });
+
+
+
+    // Additional validation for replacement serial numbers
+    let hasReplacementValidationError = false;
+    this.devices.controls.forEach(device => {
+      if (device.get('needs_replacement')?.value && !device.get('replacement_serial_number')?.value) {
+        device.get('replacement_serial_number')?.setErrors({ required: true });
+        hasReplacementValidationError = true;
+      }
+    });
+
+    if (this.jobForm.invalid || hasReplacementValidationError) {
       alert('Please fill all required fields');
       return;
     }
+
+/*
+    if (this.jobForm.invalid) {
+      alert('Please fill all required fields');
+      return;
+    }*/
 
     if (this.devices.length === 0) {
       alert('Please add at least one device');
@@ -423,13 +493,25 @@ export class AddjobComponent implements OnInit {
     const firstDevice = this.jobForm.value.devices[0];
     const formData = this.jobForm.value;
     
+    
+
     const jobData: any = {
       user_id: formData.user_id,
       estimated_delivery: formData.estimated_delivery,
       estimated_price: this.calculateTotalPrice(),
-      devices: formData.devices,
+      //devices: formData.devices,
+      devices: formData.devices.map((device: any) => ({
+        device_type: device.device_type,
+        problem_description: device.problem_description,
+        estimated_price: device.estimated_price,
+        serial_number: device.serial_number,
+        needs_replacement: device.needs_replacement,
+        replacement_serial_number: device.needs_replacement ? device.replacement_serial_number : null
+      })),
       item_type: firstDevice.device_type,
       problem_description: firstDevice.problem_description,
+      serial_number : firstDevice.serial_number,
+      needs_replacement: firstDevice.needs_replacement,
       status: formData.status
     };
 
@@ -438,6 +520,8 @@ export class AddjobComponent implements OnInit {
       jobData.payment_method = formData.payment_method;
       jobData.upi_link = formData.upi_link;
     }
+
+    
 
     const observable = this.isEditMode && this.jobId 
       ? this.jobService.updateJob(this.jobId, jobData)

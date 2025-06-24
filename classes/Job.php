@@ -13,6 +13,9 @@ class Job {
     public $job_date;
     public $item_type;
     public $problem_description;
+    public $serial_number;
+    public $needs_replacement;
+    public $replacement_serial_number;
     public $estimated_delivery;
     public $estimated_price;
     public $status;
@@ -33,13 +36,16 @@ class Job {
             
             // Insert main job
             $jobQuery = 'INSERT INTO ' . $this->table . ' 
-                        (user_id, item_type, problem_description, estimated_delivery, estimated_price, status) 
-                        VALUES (:user_id, :item_type, :problem_description, :estimated_delivery, :estimated_price, :status)';
+                        (user_id, item_type, problem_description, estimated_delivery, serial_number,needs_replacement,replacement_serial_number, estimated_price, status) 
+                        VALUES (:user_id, :item_type, :problem_description, :estimated_delivery, :serial_number,:needs_replacement,:replacement_serial_number :estimated_price, :status)';
             $jobStmt = $this->conn->prepare($jobQuery);
             $jobStmt->execute([
                 ':user_id' => $this->user_id,
                 ':item_type' => $this->item_type,
                 ':problem_description' => $this->problem_description,
+                ':serial_number' => $this->serial_number,
+                ':needs_replacement' => $this->needs_replacement,
+                ':replacement_serial_number' => $this->replacement_serial_number,
                 ':estimated_delivery' => $this->estimated_delivery,
                 ':estimated_price' => $this->estimated_price,
                 ':status' => $this->status ?? 'pending'
@@ -55,16 +61,22 @@ class Job {
                     $deviceType = is_array($device) ? $device['device_type'] : $device->device_type;
                     $problemDesc = is_array($device) ? $device['problem_description'] : $device->problem_description;
                     $estimatedPrice = is_array($device) ? $device['estimated_price'] : $device->estimated_price;
-                    
+                    $serial_number = is_array($device) ? $device['serial_number'] : $device->serial_number;
+                    $needs_replacement = is_array($device) ? $device['needs_replacement'] : $device->needs_replacement;
+                    $replacement_serial_number = is_array($device) ? $device['replacement_serial_number'] : $device->replacement_serial_number;
+
                     $deviceQuery = 'INSERT INTO job_devices
-                                  (job_id, device_type, problem_description, estimated_price)
-                                  VALUES (:job_id, :device_type, :problem_description, :estimated_price)';
+                                  (job_id, device_type, problem_description, estimated_price, serial_number)
+                                  VALUES (:job_id, :device_type, :problem_description, :estimated_price, :serial_number)';
                     $deviceStmt = $this->conn->prepare($deviceQuery);
                     $deviceStmt->execute([
                         ':job_id' => $jobId,
                         ':device_type' => $deviceType,
                         ':problem_description' => $problemDesc,
-                        ':estimated_price' => $estimatedPrice
+                        ':estimated_price' => $estimatedPrice,
+                        ':serial_number' => $serial_number,
+                        ':needs_replacement' => $needs_replacement,
+                        ':replacement_serial_number' => $replacement_serial_number
                     ]);
                 }
             }
@@ -139,6 +151,8 @@ class Job {
             $this->user_id = $row['user_id'];
             $this->item_type = $row['item_type'];
             $this->problem_description = $row['problem_description'];
+            $this->serial_number = $row['serial_number'];
+            $this->replacement_serial_number = $row['replacement_serial_number'];
             $this->estimated_delivery = $row['estimated_delivery'];
             $this->estimated_price = $row['estimated_price'];
             $this->status = $row['status'];
@@ -269,6 +283,9 @@ class Job {
                          problem_description = :problem_description,
                          estimated_delivery = :estimated_delivery,
                          estimated_price = :estimated_price,
+                         serial_number = :serial_number,
+                         needs_replacement = :needs_replacement,
+                         replacement_serial_number = :replacement_serial_number,
                          status = :status
                      WHERE id = :id';
             
@@ -277,6 +294,9 @@ class Job {
                 ':item_type' => $this->item_type,
                 ':problem_description' => $this->problem_description,
                 ':estimated_delivery' => $this->estimated_delivery,
+                ':serial_number' => $this->serial_number,
+                ':needs_replacement' => $this->needs_replacement,
+                ':replacement_serial_number' => $this->replacement_serial_number,
                 ':estimated_price' => $this->estimated_price,
                 ':status' => $this->status,
                 ':id' => $this->id
@@ -421,13 +441,16 @@ class Job {
             foreach ($this->devices as $device) {
                 $device = (array)$device;
                 $deviceQuery = 'INSERT INTO job_devices
-                              (job_id, device_type, problem_description, estimated_price)
-                              VALUES (:job_id, :device_type, :problem_description, :estimated_price)';
+                              (job_id, device_type, problem_description, estimated_price, serial_number, needs_replacement, replacement_serial_number)
+                              VALUES (:job_id, :device_type, :problem_description, :estimated_price, :serial_number, :needs_replacement, :replacement_serial_number)';
                 $deviceStmt = $this->conn->prepare($deviceQuery);
                 $deviceStmt->execute([
                     ':job_id' => $this->id,
                     ':device_type' => $device['device_type'],
                     ':problem_description' => $device['problem_description'],
+                    ':serial_number' => $device['serial_number'],
+                    ':needs_replacement' => $device['needs_replacement'],
+                    ':replacement_serial_number' => $device['replacement_serial_number'],
                     ':estimated_price' => $device['estimated_price']
                 ]);
             }
@@ -539,6 +562,7 @@ class Job {
                     <tr>
                         <th>Device</th>
                         <th>Problem</th>
+                        <th>Serial number</th>
                         <th>Price</th>
                     </tr>";
         $html .= "<tr>
@@ -552,6 +576,7 @@ class Job {
             $html .= "<tr>
                         <td>{$device->device_type}</td>
                         <td>{$device->problem_description}</td>
+                        <td>{$device->serial_number}</td>
                         <td>{$device->estimated_price}</td>
                     </tr>";
         }
