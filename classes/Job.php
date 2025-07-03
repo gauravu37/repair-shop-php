@@ -37,8 +37,27 @@ class Job {
             // Insert main job
             $jobQuery = 'INSERT INTO ' . $this->table . ' 
                         (user_id, item_type, problem_description, estimated_delivery, serial_number,needs_replacement,replacement_serial_number, estimated_price, status) 
-                        VALUES (:user_id, :item_type, :problem_description, :estimated_delivery, :serial_number,:needs_replacement,:replacement_serial_number :estimated_price, :status)';
-            $jobStmt = $this->conn->prepare($jobQuery);
+                        VALUES (:user_id, :item_type, :problem_description, :estimated_delivery, :serial_number,:needs_replacement,:replacement_serial_number, :estimated_price, :status)';
+            
+            try {
+                $jobStmt = $this->conn->prepare($jobQuery);
+                $jobStmt->execute([
+                    ':user_id' => $this->user_id,
+                    ':item_type' => $this->item_type,
+                    ':problem_description' => $this->problem_description,
+                    ':serial_number' => $this->serial_number,
+                    ':needs_replacement' => $this->needs_replacement,
+                    ':replacement_serial_number' => $this->replacement_serial_number,
+                    ':estimated_delivery' => $this->estimated_delivery,
+                    ':estimated_price' => $this->estimated_price,
+                    ':status' => $this->status ?? 'pending'
+                ]);
+            } catch (PDOException $e) {
+                echo 'Database Error: ' . $e->getMessage();
+            }
+            
+            
+            /*            $jobStmt = $this->conn->prepare($jobQuery);
             $jobStmt->execute([
                 ':user_id' => $this->user_id,
                 ':item_type' => $this->item_type,
@@ -49,8 +68,8 @@ class Job {
                 ':estimated_delivery' => $this->estimated_delivery,
                 ':estimated_price' => $this->estimated_price,
                 ':status' => $this->status ?? 'pending'
-            ]);
-            
+            ]);*/
+           
             $jobId = $this->conn->lastInsertId();
             
             // Insert devices
@@ -66,8 +85,8 @@ class Job {
                     $replacement_serial_number = is_array($device) ? $device['replacement_serial_number'] : $device->replacement_serial_number;
 
                     $deviceQuery = 'INSERT INTO job_devices
-                                  (job_id, device_type, problem_description, estimated_price, serial_number)
-                                  VALUES (:job_id, :device_type, :problem_description, :estimated_price, :serial_number)';
+                                  (job_id, device_type, problem_description, estimated_price, serial_number,needs_replacement,replacement_serial_number)
+                                  VALUES (:job_id, :device_type, :problem_description, :estimated_price, :serial_number,:needs_replacement,:replacement_serial_number)';
                     $deviceStmt = $this->conn->prepare($deviceQuery);
                     $deviceStmt->execute([
                         ':job_id' => $jobId,

@@ -25,10 +25,10 @@ $result = file_get_contents('http://localhost:3000/send-message', false, $contex
 
 echo $result;
 */
-
+require_once 'config.php';
 
 function sendMessage($number, $to, $message) {
-    $url = 'http://localhost:3000/send-message';
+    $url = 'http://13.60.28.202:8080/send-message';
     
     $payload = json_encode([
         'number' => $number,    // e.g., 'number1'
@@ -55,12 +55,12 @@ function sendMessage($number, $to, $message) {
 // ✅ Example usage:
 
 if(isset($_GET['phone'])){
-    $response = sendMessage('primeworlcomputer', $_GET['phone'], $_GET['message']);
+    $response = sendMessage('pronto', $_GET['phone'], $_GET['message']);
 }else{
-    $response = sendMessage('primeworlcomputer', '919988722706', 'Hello from PHP via 919988722706!');
+    $response = sendMessage('pronto', '919988722706', 'Hello from PHP via 919988722706!');
 }
 
-//print_r($response['success']);
+print_r($response);
 
 echo $response['success'];
 ?>
