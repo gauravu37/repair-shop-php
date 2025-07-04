@@ -1,17 +1,34 @@
 <?php
 class Database {
-    private $host = 'localhost';
-    private $db_name = 'computer_repair';
-    private $username = 'root';
-    private $password = '';
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
     private $conn;
+
+    public function __construct() {
+        // Check if running on localhost
+        if ($_SERVER['SERVER_NAME'] === 'localhost') {
+            // Local settings
+            $this->host = 'localhost';
+            $this->db_name = 'computer_repair';
+            $this->username = 'root';
+            $this->password = '';
+        } else {
+            // Live/Production settings
+            $this->host = 'your_live_host';
+            $this->db_name = 'your_live_db_name';
+            $this->username = 'your_live_db_user';
+            $this->password = 'your_live_db_password';
+        }
+    }
 
     public function connect() {
         $this->conn = null;
 
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
+                "mysql:host={$this->host};dbname={$this->db_name}",
                 $this->username,
                 $this->password
             );
