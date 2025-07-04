@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export interface Job {
   id?: number;
@@ -18,7 +19,9 @@ export interface Job {
   providedIn: 'root'
 })
 export class JobService {
-  private apiUrl = 'http://localhost/computer_repair_php/repair-shop-php/api/jobs.php';
+  //private apiUrl = 'http://localhost/computer_repair_php/repair-shop-php/api/jobs.php';
+
+  private apiUrl = environment.apiUrl+'/jobs.php';
 
   constructor(private http: HttpClient) { }
 
@@ -99,6 +102,7 @@ export class JobService {
   }
 
   getCustomers(): Observable<any> {
-    return this.http.get('http://localhost/computer_repair_php/repair-shop-php/api/users.php');
+    //return this.http.get('http://localhost/computer_repair_php/repair-shop-php/api/users.php');
+    return this.http.get(`${this.apiUrl}/users.php`);
   }
 }

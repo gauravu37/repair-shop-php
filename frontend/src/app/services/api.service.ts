@@ -4,7 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-console.log('apiurk--'+environment.apiUrl);
+
 @Injectable({
   providedIn: 'root'
 })
