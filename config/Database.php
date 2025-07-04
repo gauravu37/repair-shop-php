@@ -16,10 +16,10 @@ class Database {
             $this->password = '';
         } else {
             // Live/Production settings
-            $this->host = 'your_live_host';
-            $this->db_name = 'your_live_db_name';
-            $this->username = 'your_live_db_user';
-            $this->password = 'your_live_db_password';
+            $this->host = 'localhost';
+            $this->db_name = 'u402365599_comprep';
+            $this->username = 'u402365599_devgauravmit';
+            $this->password = '=rMe+Y:dx^6';
         }
     }
 
