@@ -103,6 +103,6 @@ export class JobService {
 
   getCustomers(): Observable<any> {
     //return this.http.get('http://localhost/computer_repair_php/repair-shop-php/api/users.php');
-    return this.http.get(`${this.apiUrl}/users.php`);
+    return this.http.get(`${environment.apiUrl}/users.php`);
   }
 }
