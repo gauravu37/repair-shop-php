@@ -57,6 +57,7 @@ switch ($method) {
         // Create user
         $data = json_decode(file_get_contents("php://input"));
 
+        $user->username = $data->email;
         $user->full_name = $data->full_name;
         $user->email = $data->email;
         $user->phone = $data->phone;

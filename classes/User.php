@@ -43,6 +43,7 @@ class User {
 
         // Bind data
         $stmt->bindParam(':username', $this->username);
+        $stmt->bindParam(':full_name', $this->full_name);
         $stmt->bindParam(':email', $this->email);
         $stmt->bindParam(':phone', $this->phone);
         $stmt->bindParam(':whatsapp', $this->whatsapp);
