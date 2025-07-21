@@ -118,6 +118,6 @@ export class JobService {
   }
 
   createCustomer(customerData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/users.php`, customerData);
+    return this.http.post<any>(`${environment.apiUrl}/users.php`, customerData);
   }
 }
