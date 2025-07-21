@@ -21,8 +21,9 @@ switch ($method) {
         $stmt = $user->read();
         $num = $stmt->rowCount();
 
+        $Totalread = $user->Totalread();
         if(isset($_GET['totalusers']) && $_GET['totalusers'] == '1'){
-            echo $num;
+            echo $Totalread;
             exit;
         }
 
@@ -56,13 +57,13 @@ switch ($method) {
         // Create user
         $data = json_decode(file_get_contents("php://input"));
 
-        $user->username = $data->username;
+        $user->full_name = $data->full_name;
         $user->email = $data->email;
         $user->phone = $data->phone;
-        $user->whatsapp = $data->whatsapp;
+        $user->whatsapp = $data->phone;
         $user->address = $data->address;
-        $user->user_type = $data->user_type;
-        $user->password = $data->password;
+        $user->user_type = 'customer';
+        $user->password = $data->full_name.'@12390';
 
         if($user->create()) {
             http_response_code(201);

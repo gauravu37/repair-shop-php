@@ -15,10 +15,50 @@
                 {{ customer.full_name }} ({{ customer.phone }})
               </option>
             </select>
+            <button cButton color="secondary" type="button" (click)="openAddCustomerModal()">
+              + Add New
+            </button>
             <div *ngIf="jobForm.get('user_id')?.invalid && jobForm.get('user_id')?.touched" class="text-danger">
               Customer selection is required
             </div>
           </c-col>
+
+          <!-- Add Customer Modal -->
+          <c-modal
+            alignment="center"
+            [visible]="showAddCustomerModal"
+            (visibleChange)="showAddCustomerModal = $event"
+          >
+            <c-modal-header>
+              <h5 cModalTitle>Add New Customer</h5>
+            </c-modal-header>
+            <c-modal-body>
+              <form [formGroup]="customerForm">
+                <c-row class="g-3">
+                  <c-col md="6">
+                    <label cLabel for="fullName">Full Name *</label>
+                    <input type="text" cFormControl id="fullName" formControlName="full_name" placeholder="John Doe">
+                  </c-col>
+                  <c-col md="6">
+                    <label cLabel for="phone">Phone *</label>
+                    <input type="text" cFormControl id="phone" formControlName="phone" placeholder="+1234567890">
+                  </c-col>
+                  <c-col md="12">
+                    <label cLabel for="email">Email</label>
+                    <input type="email" cFormControl id="email" formControlName="email" placeholder="john@example.com">
+                  </c-col>
+                  <c-col md="12">
+                    <label cLabel for="address">Address</label>
+                    <textarea cFormControl id="address" formControlName="address" rows="2"></textarea>
+                  </c-col>
+                </c-row>
+              </form>
+            </c-modal-body>
+            <c-modal-footer>
+              <button cButton color="secondary" (click)="showAddCustomerModal = false">Cancel</button>
+              <button cButton color="primary" (click)="saveNewCustomer()">Save Customer</button>
+            </c-modal-footer>
+          </c-modal>
 
           <!-- Devices Form Array -->
           <div formArrayName="devices" class="col-12">

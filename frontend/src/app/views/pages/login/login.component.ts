@@ -63,7 +63,7 @@ export class LoginComponent {
 	ngOnInit(): void {
     if (this.authService.isLoggedIn()) {
       const user = this.authService.getCurrentUser();
-      alert(user?.user_type);
+      //alert(user?.user_type);
       // Redirect based on user type if needed
       if (user?.user_type === 'admin') {
         //this.router.navigate(['/admin/dashboard']);

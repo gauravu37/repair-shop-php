@@ -25,6 +25,8 @@ import { IconDirective } from '@coreui/icons-angular';
 import { WidgetsBrandComponent } from '../widgets/widgets-brand/widgets-brand.component';
 import { WidgetsDropdownComponent } from '../widgets/widgets-dropdown/widgets-dropdown.component';
 import { DashboardChartsData, IChartProps } from './dashboard-charts-data';
+import { Routes } from '@angular/router';
+import { Router } from '@angular/router'; // 
 
 interface IUser {
   name: string;
@@ -46,11 +48,16 @@ interface IUser {
     imports: [WidgetsDropdownComponent, TextColorDirective, CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonDirective, IconDirective, ReactiveFormsModule, ButtonGroupComponent, FormCheckLabelDirective, ChartjsComponent, NgStyle, CardFooterComponent, GutterDirective, ProgressBarDirective, ProgressComponent, WidgetsBrandComponent, CardHeaderComponent, TableDirective, AvatarComponent]
 })
 export class DashboardComponent implements OnInit {
+  authToken: string | null = null;
+  user: any = null;
+
+  readonly #router: Router = inject(Router);
 
   readonly #destroyRef: DestroyRef = inject(DestroyRef);
   readonly #document: Document = inject(DOCUMENT);
   readonly #renderer: Renderer2 = inject(Renderer2);
   readonly #chartsData: DashboardChartsData = inject(DashboardChartsData);
+  
 
   public users: IUser[] = [
     {
@@ -144,8 +151,19 @@ export class DashboardComponent implements OnInit {
   public trafficRadioGroup = new FormGroup({
     trafficRadio: new FormControl('Month')
   });
-
+  
   ngOnInit(): void {
+     this.authToken = localStorage.getItem('auth_token');
+    const userData = localStorage.getItem('user');
+    this.user = userData ? JSON.parse(userData) : null;
+
+    // Optionally check if token is missing
+    if (!this.authToken) {
+      
+      this.#router.navigate(['/login'])
+    }
+    //alert(this.user.id);
+    //console.log(this.user);
     this.initCharts();
     this.updateChartOnColorModeChange();
   }

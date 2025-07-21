@@ -23,6 +23,7 @@ import {
 } from '@coreui/angular';
 
 import { IconDirective } from '@coreui/icons-angular';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-default-header',
@@ -44,9 +45,15 @@ export class DefaultHeaderComponent extends HeaderComponent {
     const currentMode = this.colorMode();
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
-
+  readonly #router: Router = inject(Router); // ✅ inject Router
   constructor() {
     super();
+  }
+
+  logout(): void {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
+    this.#router.navigate(['/login']);
   }
 
   sidebarId = input('sidebar1');

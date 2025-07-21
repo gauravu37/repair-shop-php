@@ -11,7 +11,18 @@ import { environment } from 'src/environments/environment';
 export class ApiService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  private user: any = null;
+  private userId: number | null = null;
+
+  constructor(private http: HttpClient) {
+    const userData = localStorage.getItem('user');
+    this.user = userData ? JSON.parse(userData) : null;
+    this.userId = this.user?.id || null;
+  }
+
+  getCurrentUserId(): number | null {
+    return this.userId;
+  }
   
     // auth.service.ts
 	login(email: string, password: string): Observable<any> {

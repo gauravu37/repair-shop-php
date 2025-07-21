@@ -20,7 +20,8 @@ class User {
     public function create() {
         $query = 'INSERT INTO ' . $this->table . ' 
             SET 
-                username = :username,
+                username = :email,
+                full_name = :full_name,
                 email = :email,
                 phone = :phone,
                 whatsapp = :whatsapp,
@@ -32,6 +33,7 @@ class User {
 
         // Clean data
         $this->username = htmlspecialchars(strip_tags($this->username));
+        $this->full_name = htmlspecialchars(strip_tags($this->full_name));
         $this->email = htmlspecialchars(strip_tags($this->email));
         $this->phone = htmlspecialchars(strip_tags($this->phone));
         $this->whatsapp = htmlspecialchars(strip_tags($this->whatsapp));
@@ -66,6 +68,17 @@ class User {
         $stmt->execute();
         
         return $stmt;
+    }
+
+
+    public function Totalread() {
+        $query = 'SELECT COUNT(*) as total FROM ' . $this->table . ' WHERE user_type = "customer"';
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        // Fetch the count result
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row['total']; // ✅ this will return just the total count
     }
 
     // Add other methods like update, delete, get by id, etc.
