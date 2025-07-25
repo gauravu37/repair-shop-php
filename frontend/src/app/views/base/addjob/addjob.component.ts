@@ -74,6 +74,7 @@ export class AddjobComponent implements OnInit {
   jobId: number | null = null;
   paymentMethods = ['cash', 'bank_transfer', 'upi'];
   showPaymentForm = false;
+  isSavingCustomer = false; // Add this line
 
   showAddCustomerModal = false;
   customerForm: FormGroup;
@@ -378,27 +379,43 @@ onReplacementChange(index: number) {
   this.showAddCustomerModal = true;
 }
 
+// Add this method to handle modal visibility changes
+onModalVisibleChange(visible: boolean): void {
+  this.showAddCustomerModal = visible;
+}
+
 saveNewCustomer(): void {
-  if (this.customerForm.invalid) {
+  if (this.customerForm.invalid || this.isSavingCustomer) {
     this.markFormGroupTouched(this.customerForm);
     return;
   }
 
+  this.isSavingCustomer = true;
+
   this.jobService.createCustomer(this.customerForm.value).subscribe({
     next: (newCustomer) => {
       // Add the new customer to the dropdown
-      this.customers.push(newCustomer);
+      this.customers.unshift(newCustomer);
       
       // Select the new customer in the form
       this.jobForm.get('user_id')?.setValue(newCustomer.id);
       
-      // Close the modal
+      // Close the modal and reset the form
       this.showAddCustomerModal = false;
+      this.customerForm.reset();
+      this.isSavingCustomer = false;
+      
+      // Show success message
+      alert('Customer created successfully!');
     },
     error: (err) => {
       console.error('Error creating customer:', err);
-      alert('Error creating customer. Please try again.');
+       this.showAddCustomerModal = false;
+      this.isSavingCustomer = false;
+      alert(err.message);
     }
   });
 }
+
+
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';  // Add this import
 import { environment } from 'src/environments/environment';
 
 export interface Job {
@@ -117,7 +118,31 @@ export class JobService {
     return this.http.get(`${environment.apiUrl}/users.php`);
   }
 
+  //createCustomer(customerData: any): Observable<any> {
+  //  return this.http.post<any>(`${environment.apiUrl}/users.php`, customerData);
+  //}
+
   createCustomer(customerData: any): Observable<any> {
-    return this.http.post<any>(`${environment.apiUrl}/users.php`, customerData);
+    return this.http.post<any>(`${environment.apiUrl}/users.php`, customerData).pipe(
+      map(response => {
+        if (response && response.success) {
+          return {
+            id: response.id,
+            full_name: response.full_name,
+            phone: response.phone,
+            email: response.email
+          };
+        }
+        throw new Error(response?.message || 'Unknown error creating customer');
+      }),
+      catchError(error => {
+        console.error('API Error:', error);
+        return throwError(() => new Error(
+          error.error?.message || 
+          error.message || 
+          'Failed to create customer. Please try again.'
+        ));
+      })
+    );
   }
 }

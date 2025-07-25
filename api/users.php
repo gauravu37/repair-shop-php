@@ -67,13 +67,26 @@ switch ($method) {
         $user->password = $data->full_name.'@12390';
 
         if($user->create()) {
+            // Get the last inserted ID
+            $lastId = $user->conn->lastInsertId();
+            
             http_response_code(201);
-            echo json_encode(array("message" => "User was created."));
+            echo json_encode([
+                "success" => true,
+                "message" => "User was created.",
+                "id" => $lastId,
+                "full_name" => $user->full_name,
+                "phone" => $user->phone,
+                "email" => $user->email
+            ]);
         } else {
             http_response_code(503);
-            echo json_encode(array("message" => "Unable to create user."));
+            echo json_encode([
+                "success" => false,
+                "message" => "Unable to create user."
+            ]);
         }
-        break;
+    break;
     // Add cases for PUT and DELETE
 }
 ?>
