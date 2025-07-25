@@ -67,11 +67,13 @@ switch ($method) {
         $user->password = $data->full_name.'@12390';
 
         if($user->create()) {
+
+            //echo '<pre>';print_r($user->id);exit;
             // Get the last inserted ID
-            $//lastId = $user->conn->lastInsertId();
+            //$lastId = $user->conn->lastInsertId();
 
             // Use the new public method to get the last insert ID
-            $lastId = $user->getLastInsertId();
+            $lastId = $user->id;
             
             http_response_code(201);
             echo json_encode([
