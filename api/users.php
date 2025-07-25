@@ -68,7 +68,10 @@ switch ($method) {
 
         if($user->create()) {
             // Get the last inserted ID
-            $lastId = $user->conn->lastInsertId();
+            $//lastId = $user->conn->lastInsertId();
+
+            // Use the new public method to get the last insert ID
+            $lastId = $user->getLastInsertId();
             
             http_response_code(201);
             echo json_encode([

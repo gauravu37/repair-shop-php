@@ -17,6 +17,11 @@ class User {
         $this->conn = $db;
     }
 
+    // Add this public method to get the last insert ID
+    public function getLastInsertId() {
+        return $this->conn->lastInsertId();
+    }
+
     public function create() {
         $query = 'INSERT INTO ' . $this->table . ' 
             SET 
