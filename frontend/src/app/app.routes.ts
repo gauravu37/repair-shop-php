@@ -90,6 +90,13 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'settings',
+    loadComponent: () => import('./settings/settings.component').then(m => m.SettingsComponent ),
+    data: {
+      title: 'Settings Page'
+    }
+  },
+  {
     path: 'jobs',
     loadComponent: () => import('./views/base/jobs/jobs.component').then(m => m.JobsComponent),
     data: {

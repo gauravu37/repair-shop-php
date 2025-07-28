@@ -1,0 +1,67 @@
+<c-card>
+  <c-card-header>
+    <h5>Business Settings</h5>
+  </c-card-header>
+  <c-card-body>
+    <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+      <!-- Logo Upload -->
+      <div class="mb-4">
+        <label cLabel>Business Logo</label>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <img [src]="logoPreview || './assets/default-logo.png'" 
+                 alt="Logo Preview" 
+                 class="img-thumbnail" 
+                 width="150"
+                 *ngIf="!uploadingLogo">
+            <c-spinner *ngIf="uploadingLogo"></c-spinner>
+          </div>
+          <div>
+            <input type="file" 
+                   class="form-control" 
+                   (change)="onLogoSelected($event)"
+                   accept="image/*">
+            <small class="text-muted">Recommended size: 300x100 pixels</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment QR Code Upload -->
+      <div class="mb-4">
+        <label cLabel>Payment QR Code</label>
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <img [src]="qrCodePreview || './assets/default-qr.png'" 
+                 alt="QR Code Preview" 
+                 class="img-thumbnail" 
+                 width="150"
+                 *ngIf="!uploadingQrCode">
+            <c-spinner *ngIf="uploadingQrCode"></c-spinner>
+          </div>
+          <div>
+            <input type="file" 
+                   class="form-control" 
+                   (change)="onQrCodeSelected($event)"
+                   accept="image/*">
+            <small class="text-muted">Upload payment QR code (UPI, PayPal, etc.)</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Info -->
+      <div class="mb-3">
+        <label cLabel for="businessName">Business Name</label>
+        <input type="text" cFormControl id="businessName" formControlName="businessName">
+      </div>
+
+      <div class="mb-3">
+        <label cLabel for="contactNumber">Contact Number</label>
+        <input type="text" cFormControl id="contactNumber" formControlName="contactNumber">
+      </div>
+
+      <button cButton color="primary" type="submit" [disabled]="settingsForm.invalid || uploading">
+        Save Settings
+      </button>
+    </form>
+  </c-card-body>
+</c-card>
