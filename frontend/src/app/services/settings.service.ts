@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class SettingsService {
-  private apiUrl = `${environment.apiUrl}/settings`;
+  private apiUrl = `${environment.apiUrl}/settings.php`;
 
   constructor(private http: HttpClient) { }
 
