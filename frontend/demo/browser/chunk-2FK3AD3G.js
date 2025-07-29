@@ -1,1 +1,1 @@
-var t={production:!0,apiUrl:"https://crm.prontoinfosys.net/api"};export{t as a};
+var t={production:!0,apiUrl:"https://pwc.prontoinfosys.net/api"};export{t as a};

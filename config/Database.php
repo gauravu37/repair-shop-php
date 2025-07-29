@@ -16,16 +16,16 @@ class Database {
             $this->password = '';
         } else {
             // Live/Production settings
-            $this->host = 'localhost';
+            /*$this->host = 'localhost';
             $this->db_name = 'u402365599_comprep';
             $this->username = 'u402365599_devgauravmit';
-            $this->password = '=rMe+Y:dx^6';
+            $this->password = '=rMe+Y:dx^6';*/
 
             //PWC
-            /*$this->host = 'localhost';
+            $this->host = 'localhost';
             $this->db_name = 'u402365599_pwc';
             $this->username = 'u402365599_pwc';
-            $this->password = 'S#u^d~I9';*/
+            $this->password = 'S#u^d~I9';
             
         }
     }

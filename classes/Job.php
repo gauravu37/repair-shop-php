@@ -408,7 +408,7 @@ class Job {
 
         //$webhookUrl = "https://hook.us2.make.com/2859um6up676u1vl622hr1i4r7ot2p4g?phone={$customerPhone}&message={$message}";
 
-        $webhookUrl = "https://crm.prontoinfosys.net/api/whatsapp.php?phone={$customerPhone}&message={$message}";
+        $webhookUrl = "https://pwc.prontoinfosys.net/api/whatsapp.php?phone={$customerPhone}&message={$message}";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $webhookUrl);
