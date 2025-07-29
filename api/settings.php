@@ -8,10 +8,10 @@ header("Access-Control-Max-Age: 3600");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/../classes/Setting.php';
+require_once __DIR__ . '/../classes/settings.php';
 
 $database = new Database();
-$db = $database->getConnection();
+$db = $database->connect();
 
 $setting = new Setting($db);
 

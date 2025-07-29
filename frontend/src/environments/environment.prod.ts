@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://pwc.prontoinfosys.net/api'
+  apiUrl: 'https://crm.prontoinfosys.net/api'
 };
