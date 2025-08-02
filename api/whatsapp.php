@@ -55,9 +55,9 @@ function sendMessage($number, $to, $message) {
 // ✅ Example usage:
 
 if(isset($_GET['phone'])){
-    $response = sendMessage('pwcmoga', $_GET['phone'], $_GET['message']);
+    $response = sendMessage('pronto', $_GET['phone'], $_GET['message']);
 }else{
-    $response = sendMessage('pwcmoga', '919988722706', 'Hello from PHP via 919988722706!');
+    $response = sendMessage('pronto', '919988722706', 'Hello from PHP via 919988722706!');
 }
 
 print_r($response);

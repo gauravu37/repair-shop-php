@@ -378,11 +378,21 @@ class Job {
         return $result['phone'] ?? null;
     }
 
+    private function getJobStatus($JobId) {
+        $query = 'SELECT status FROM jobs WHERE id = ?';
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        return $result['status'] ?? null;
+    }
+
     private function sendMakeWebhookNotification($jobId, $type = "") {
         $customerPhone = $this->getCustomerPhone($this->user_id) ?? '+919988722706';
         $customerPhone = $this->formatIndianMobile($customerPhone);
         //echo $customerPhone; exit;
         //$customerPhone = '919988722706';
+        $getJobStatusbyID = $this->getJobStatus($jobId);
 
         if($type == 'Created'){
             $message = urlencode(
@@ -391,7 +401,7 @@ class Job {
                 "Item: *{$this->item_type}*\n" .
                 "Issue: *{$this->problem_description}*\n" .
                 "Est. Delivery: *{$this->estimated_delivery}*\n" .
-                "Status: *{$this->status}*"
+                "Status: *{$getJobStatusbyID}*"
             );
         }else if($type == 'Updated'){
             $message = urlencode(
@@ -400,7 +410,7 @@ class Job {
                 "Item: *{$this->item_type}*\n" .
                 "Issue: *{$this->problem_description}*\n" .
                 "Est. Delivery: *{$this->estimated_delivery}*\n" .
-                "Status: *{$this->status}*"
+                "Status: *{$getJobStatusbyID}*"
             );
         }
 
@@ -408,7 +418,7 @@ class Job {
 
         //$webhookUrl = "https://hook.us2.make.com/2859um6up676u1vl622hr1i4r7ot2p4g?phone={$customerPhone}&message={$message}";
 
-        $webhookUrl = "https://pwc.prontoinfosys.net/api/whatsapp.php?phone={$customerPhone}&message={$message}";
+        $webhookUrl = "https://crm.prontoinfosys.net/api/whatsapp.php?phone={$customerPhone}&message={$message}";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $webhookUrl);
